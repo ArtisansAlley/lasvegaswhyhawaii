@@ -53,6 +53,7 @@ function renderwall_content(doc) {
   let image = dc.createElement("img");
   let source = dc.createElement("source");
   let p_cardText = dc.createElement("p");
+  let br = dc.createElement("br");
 
   p_cardText.setAttribute("class", "mt-2");
 
@@ -77,7 +78,7 @@ function renderwall_content(doc) {
     iframe.setAttribute("id", doc.id);
     iframe.setAttribute(
       "class",
-      "frame embed-responsive embed-responsive-16by9"
+      "frame embed-responsive embed-responsive-16by9 "
     );
     iframe.setAttribute("frameborder", "0");
     iframe.setAttribute("allowfullscreen", "true");
@@ -89,10 +90,11 @@ function renderwall_content(doc) {
     div_videoWrapper.setAttribute("class", "videoWrapper");
     div_videoWrapper.appendChild(iframe);
     div_cardbody.appendChild(div_videoWrapper);
+    div_cardbody.appendChild(br);
   } else {
     image.setAttribute("id", doc.id);
     image.setAttribute("alt", "");
-    image.setAttribute("class", "image-content");
+    image.setAttribute("class", "image-content pb-2");
     setLink(doc.data().graphic, doc.id);
     div_cardbody.appendChild(image);
   }
@@ -101,7 +103,6 @@ function renderwall_content(doc) {
   div_row.appendChild(div_card);
   wall_content.appendChild(div_row);
 }
-
 getRealtimeUpdates = function() {
   dc.getElementById("wall-content").style.display = "none";
   dbBlogs
