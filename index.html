@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Why Hawaii | Home</title>
+
+
+  <link rel="stylesheet" href="./css/bootstrap.min.css">
+  <script type="text/javascript" src="./js/jquery.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-firestore.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--   <script>
+    $(document).ready(function(){
+      $("#saveReservation").click(function(){
+        console.log("reset Here!");
+        $("#reservationForm").trigger("reset");
+      });
+    });
+  </script> -->
+
+  <!-- Sign-up Form CSS -->
+  <style type="text/css">
+  .form-control{
+    width: 500px;
+  }
+
+</style>
+
+
+
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <h2>Events and Seminars Sign-up</h2>
+    </div>
+    <div class="row">
+      <div class="form" id="reservationForm" onsubmit="return reserveEvent();">
+        <div class="form-content">
+          <div class="col-sm-12">
+            <h5>Name</h5>
+            <input type="text" class="form-control" action="#"  placeholder="Your Name *" id = "r_name" required />
+            <h5>Choose and Event</h5>
+            <select class="form-control" id = "r_event">
+              <option value="" disabled selected>Select your option *</option>
+            <!--<option>7th World Wide Uchinanchu Festival Tour | Oct 25 - Nov 1, 2020</option>
+              <option>56th World Wide Uchinanchu Festival Tour | Oct 25 - Nov 1, 2020</option> -->
+            </select>
+            <h5>Phone Number</h5>
+            <input type="text" class="form-control" placeholder="Your Phone Number *" id = "r_phone" required/>
+            <h5>Email Address</h5>
+            <input type="text" class="form-control" placeholder="Your Email Address *" id = "r_email" required/>
+            <h5>City</h5>
+            <input type="text" class="form-control" placeholder="Your City *" id = "r_city" required/>
+            <h5>State</h5>
+            <input type="text" class="form-control" placeholder="Your State *" id = "r_state" required/>
+            <h5>Zipcode</h5>
+            <input type="text" class="form-control" placeholder="Your Zipcode *" id = "r_zipcode" required/>
+            <h5>How Did You Hear About us?</h5>
+            <select class="form-control" id = "r_how">
+             <option value="" disabled selected>Select your option *</option>
+             <option>Web Search</option>
+             <option>Social Media</option>
+             <option>Email</option>
+             <option>News Paper</option>
+             <option>Radio</option>
+             <option>TV</option>
+             <option>Friend</option>
+             <option>Other</option>
+
+           </select>
+           <h5>Message</h5>
+           <textarea class="form-control" rows="5" id = "r_message"></textarea>
+           <br>
+
+           <button type="submit" class="form-control  btn-success" id="saveReservation">Save Reservation</button>
+         </div>
+
+       </div>
+
+     </div>
+   </div>
+ </div>
+
+ <!-- More Scripts -->
+ <script src="./js/app.js"> </script>
+ <script src="./js/sanitize.js"> </script>
+ <script src="./js/reservation.js"> </script>
+
+</body>
+</html>

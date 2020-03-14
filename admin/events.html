@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript">
+    if(localStorage.getItem("why_username") == null){
+      window.location.href = "./login.html";
+    }  
+  </script>
+  <title>Why Hawaii | Events</title>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-firestore.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/datatables.css">
+  <script type="text/javascript" src="../js/jquery.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+
+  <script src="../js/datatables.js"> </script>
+  <script src="../js/logout.js"> </script>
+
+  <!-- loader -->
+  <link rel="stylesheet" href="../css/loader.css">
+
+  <style type="text/css">
+  #titleText{
+    font-size: 25px
+  }
+  tr,td,.dataTables_info,.paginate_button,.textControl,label{
+    font-size: 13px;
+  }
+  .paginate_button{
+    padding: 6px 0px;
+    /*border-radius: 15px;*/
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+  }
+
+  .btnControl{
+    height: 30px;
+    padding: 6px 0px;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.42857;
+  }
+  .funcButton{
+    width: 30px;
+    height: 30px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+  }
+  .btn-group-items{
+    padding: 2px;
+  }
+
+</style>
+
+
+
+</head>
+<body>
+  <div class="container" style="width: 100%">
+    <div class="row" style="width: 100%">
+      <div class="col-sm-6 d-flex p-2 justify-content-start" id = "headText">
+        <h4 id="titleText" title="Reservations">Manage Events</h4>
+      </div>
+      <div class="col-sm-6 d-flex p-2 justify-content-end" id = "headText">
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <button type="button" class="btn btn-outline-primary textControl btnControl btn-group-items" onclick="getRealtimeUpdates()"><span class="btn-group-items">Refresh Table</span></button>          
+          <button type="button" class="btn btn-outline-info textControl btnControl btn-group-items" onclick="location.href = 'reservations.html';"><span class="btn-group-items">Manage Reservations</span>    
+          </button>
+          <button type="button" class="btn btn-outline-success textControl btnControl btn-group-items" data-toggle="modal" data-target="#modalAddEvent"><span class="btn-group-items">Add An Event</span></button>
+          <button type="button" class="btn btn-outline-danger textControl btnControl btn-group-items" onclick="logout()"><span class="btn-group-items">Test Logout</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" style="width: 100%">
+      <div class="col-sm-3" style="width: 100%">
+
+      </div>
+      <div class="col-sm-9" style="width: 100%">
+        <div id = "tdLoading" class="mt-5">
+          <div class="d-flex p-2 mt-5 justify-content-center">
+           <!--  <img id="loadingImg"  src="../images/loading.gif" style="width: 40%"> -->
+           <div class="loader-lg mt-5"> </div>
+         </div>
+       </div>
+       <!-- TABLE -->
+       <table id="events_table" class="table table-hover  dataTableProc" style="display: none">
+        <thead class="thead-dark">
+          <tr>
+            <th width="40%">Event Title</th>
+            <th>Event Location</th>
+            <th>Event Description</th>
+            <th>Event Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Contents Here -->
+
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+
+<!-- More Scripts -->
+<script src="../js/app.js"> </script>
+<script src="../js/sanitize.js"> </script>
+<script src="../js/events.js"> </script>
+
+
+<!-- MODALs -->
+
+<div class="modal fade" id="modalEditEvent" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Edit Event</h4>
+        <button type="button" class="close" data-dismiss="modal" onclick="resetEditForm()"><i class="fa fa-times"></i></button>
+
+
+      </div>
+      <div class="modal-body">
+        <div class="form" id="reservationForm" onsubmit="return reserveEvent();">
+          <div class="form-content">
+            <div class="col-sm-12">
+              <h5>Event Title</h5>
+              <input type="text" class="form-control" action="#" placeholder="Your Event Title" id = "e_title" required />
+              <h5>Event Location</h5>
+              <input type="text" class="form-control" action="#" placeholder="Your Event Location" id = "e_location" required />
+              <h5>Event Description</h5>
+              <textarea class="form-control" rows="5" id = "e_desc" placeholder="Your Event Description"></textarea>
+              <h5>Event Date(s)</h5>
+              <textarea class="form-control" rows="5" id = "e_date" placeholder="Your Event Date"></textarea>
+              <br>
+
+              <button type="submit" class="form-control  btn-warning btn-group-items" data-dismiss="modal" id="saveReservation" onclick="alterEvent()"><strong>Edit Event</strong></button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btnControl btn-group-items" data-dismiss="modal" onclick="resetEditForm()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalAddEvent" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Add a New Event</h4>
+        <button type="button" class="close" data-dismiss="modal" onclick="resetEditForm()"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form" id="reservationForm" onsubmit="return reserveEvent();">
+          <div class="form-content">
+            <div class="col-sm-12">
+              <h5>Event Title</h5>
+              <input type="text" class="form-control" action="#" placeholder="Your Event Title" id = "ae_title" required />
+              <h5>Event Location</h5>
+              <input type="text" class="form-control" action="#" placeholder="Your Event Location" id = "ae_location" required />
+              <h5>Event Description</h5>
+              <textarea class="form-control" rows="5" placeholder="Your Event Description" id = "ae_desc"></textarea>
+              <h5>Event Date(s)</h5>
+              <textarea class="form-control" rows="5" placeholder="Your Event Date" id = "ae_date"></textarea>
+              <br>
+
+              <button type="submit" class="form-control  btn-success btn-group-items" data-dismiss="modal" id="saveReservation" onclick="addEvent()"><strong>Add Event</strong></button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btnControl btn-group-items" data-dismiss="modal" onclick="resetEditForm()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalDelete" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>
+          <span id = "nameForMessage">Are you sure?</span>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>        
+      </div>
+      <div class="modal-body">
+        <p id="delMessage?">Delete the event <span id="delName">name</span></p>
+        <button type="button" class="form-control  btn-danger btn-group-items" data-dismiss="modal" id="saveReservation" onclick="delRow()"><strong>Yes, Delete</strong></button>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

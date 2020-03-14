@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript">
+      if (localStorage.getItem("why_username") == null) {
+        window.location.href = "./login.html";
+      }
+    </script>
+    <title>Why Hawaii | Reservation</title>
+
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../css/datatables.css" />
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+
+    <script src="../js/datatables.js"></script>
+    <script src="../js/logout.js"></script>
+
+    <!-- loader -->
+    <link rel="stylesheet" href="../css/loader.css" />
+
+    <!-- Growl -->
+    <script src="../js/jquery.growl.js" type="text/javascript"></script>
+    <link href="../css/jquery.growl.css" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+      h5 {
+        margin-top: 10px;
+        margin-bottom: -1px;
+      }
+      .reservation_table_wrapper {
+        width: 100%;
+      }
+      tr,
+      td,
+      .dataTables_info,
+      .paginate_button,
+      .textControl,
+      label {
+        font-size: 13px;
+      }
+      table {
+        width: 100%;
+      }
+      .paginate_button {
+        padding: 6px 0px;
+        /*border-radius: 15px;*/
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.42857;
+      }
+      #titleText {
+        font-size: 25px;
+      }
+      .funcButton {
+        width: 30px;
+        height: 30px;
+        padding: 6px 0px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.42857;
+      }
+
+      .btnControl {
+        height: 30px;
+        padding: 6px 0px;
+        font-size: 12px;
+        text-align: center;
+        line-height: 1.42857;
+      }
+      .btn-group-items {
+        padding: 2px;
+      }
+      .loadingImg {
+        width: 100%;
+      }
+      #saveReservation:hover {
+        color: white;
+      }
+      progress[value]::-webkit-progress-value {
+        background-image: -webkit-linear-gradient(
+            -45deg,
+            transparent 33%,
+            rgba(0, 0, 0, 0.1) 33%,
+            rgba(0, 0, 0, 0.1) 66%,
+            transparent 66%
+          ),
+          -webkit-linear-gradient(top, rgba(255, 255, 255, 0.25), rgba(0, 0, 0, 0.25)),
+          -webkit-linear-gradient(left, rgb(131, 44, 105), rgb(211, 106, 36));
+
+        border-radius: 2px;
+        background-size: 35px 20px, 100% 100%, 100% 100%;
+      }
+
+      .embed-responsive {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      .frame {
+        border: 0;
+        -ms-transform: scale(100%);
+        -moz-transform: scale(100%);
+        -o-transform: scale(100%);
+        -webkit-transform: scale(100%);
+        transform: scale(100%);
+
+        -ms-transform-origin: 0 0;
+        -moz-transform-origin: 0 0;
+        -o-transform-origin: 0 0;
+        -webkit-transform-origin: 0 0;
+        transform-origin: 0 0;
+      }
+
+      progress {
+        -webkit-appearance: none;
+      }
+
+      progress::-webkit-progress-bar {
+        background-color: orange;
+      }
+
+      .progress-bar span {
+        position: absolute;
+        display: inline-block;
+        color: #fff;
+        text-align: right;
+      }
+
+      .progress-bar {
+        display: block;
+        position: relative;
+        width: 100%;
+      }
+
+      progress {
+        width: 100%;
+      }
+    </style>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-firestore.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+  <body>
+    <div class="container" style="width: 100%">
+      <div class="row">
+        <div class="col-sm-6 d-flex p-2 justify-content-start" id="headText">
+          <h4 id="titleText" title="Reservations">Manage Blogs</h4>
+        </div>
+        <div class="col-sm-6 d-flex p-2 justify-content-end" id="headText">
+          <div class="btn-group" role="group" aria-label="Basic example">
+            <button
+              type="button"
+              class="btn btn-outline-primary textControl btnControl btn-group-items"
+              onclick="getRealtimeUpdates()"
+            >
+              <span class="btn-group-items">Refresh Table</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-info textControl btnControl btn-group-items"
+              onclick="location.href = 'events.html';"
+            >
+              <span class="btn-group-items">Manage Events</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-info textControl btnControl btn-group-items"
+              data-toggle="modal"
+              data-target="#uploadModal"
+            >
+              <span class="btn-group-items">Upload Blog</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-danger textControl btnControl btn-group-items"
+              onclick="logout()"
+            >
+              <span class="btn-group-items">Test Logout</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="width: 100%">
+        <!-- <div class="col-sm-3"></div> -->
+        <div class="col-sm-12" style="width: 100%">
+          <div id="tdLoading" class="mt-5">
+            <div class="d-flex p-2 mt-5 justify-content-center">
+              <div class="loader-lg mt-5"></div>
+            </div>
+          </div>
+          <table
+            id="blogs_table"
+            class="table table-hover  dataTableProc"
+            style="display: none"
+          >
+            <thead class="thead-dark">
+              <tr>
+                <th width="20%">Title</th>
+                <th width="50%">Caption</th>
+                <th width="10%">Date Uploaded</th>
+                <th width="10%">Content</th>
+                <th width="10%">Action</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <div class="modal fade" id="showContent" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>
+            <span id="nameForMessage">Content</span>
+          </h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body wrap">
+          <iframe
+            width="100%"
+            height="430"
+            class="frame embed-responsive-item"
+            src=""
+            id="videoSample2"
+            frameborder="0"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          >
+          </iframe>
+          <div
+            id="imgContent2"
+            width="100%"
+            height="430"
+            style="display: none;"
+          >
+            <img
+              src=""
+              class="upload_content"
+              id="upload_content2"
+              width="100%"
+              alt=""
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-primary btnControl btn-group-items" data-dismiss="modal">Close</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="uploadModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>
+            <span>Upload a New Blog</span>
+          </h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="form" id="upload_form">
+            <h5>Title</h5>
+            <input
+              type="text"
+              class="form-control"
+              action="#"
+              placeholder="Blog Title"
+              id="b_title"
+              required
+            />
+            <h5>Caption</h5>
+            <textarea
+              class="form-control"
+              rows="5"
+              id="b_caption"
+              placeholder="Blog Caption"
+            ></textarea>
+            <br />
+            <progress
+              value="0"
+              max="100"
+              class="progress-bar bg-info mb-1"
+              style="display: none"
+              id="uploader"
+            >
+            </progress>
+            <input
+              type="file"
+              class="button"
+              value="upload"
+              id="fileButton"
+              accept="image/jpg,image/jpeg,image/png,video/mov,video/mp4,video/avi,video/flv,video/wmv"
+            />
+            <hr />
+            <div id="uploadConfirmation" style="display: none">
+              <iframe
+                width="100%"
+                height="430"
+                class="frame embed-responsive-item"
+                src=""
+                id="videoSample"
+                frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              >
+              </iframe>
+              <div
+                id="imgContent"
+                width="100%"
+                height="430"
+                style="display: none;"
+              >
+                <img
+                  src=""
+                  class="upload_content"
+                  id="upload_content"
+                  width="100%"
+                  alt=""
+                />
+              </div>
+              <hr />
+              <button
+                type="submit"
+                class="form-control  btn-warning btn-group-items"
+                data-dismiss="modal"
+                id="uploadButton"
+                onclick="uploadBlog()"
+              >
+                <strong>Upload Blog</strong>
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-primary btnControl btn-group-items" data-dismiss="modal">Close</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalDelete" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>
+            <span id="nameForMessage">Are you sure?</span>
+          </h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="delMessage?">
+            Delete <span id="delName">name</span>'s Reservation?
+          </p>
+          <button
+            type="button"
+            class="form-control  btn-danger btn-group-items"
+            data-dismiss="modal"
+            id="saveReservation"
+            onclick="delRow()"
+          >
+            <strong>Yes, Delete</strong>
+          </button>
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <script src="../js/app.js"></script>
+    <script src="../js/sanitize.js"></script>
+    <script src="../js/blogs.js"></script>
+  </footer>
+</html>

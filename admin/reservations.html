@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript">
+    if(localStorage.getItem("why_username") == null){
+      window.location.href = "./login.html";
+    }  
+  </script>
+  <title>Why Hawaii | Reservation</title>
+
+
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/datatables.css">
+  <script type="text/javascript" src="../js/jquery.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+
+  <script src="../js/datatables.js"> </script>
+  <script src="../js/logout.js"> </script>
+
+  <!-- loader -->
+  <link rel="stylesheet" href="../css/loader.css">
+
+  <style type="text/css">
+  h5{
+    margin-top: 10px;
+    margin-bottom: -1px;
+  }
+  .reservation_table_wrapper{
+    width: 100%;
+  }
+  tr,td,.dataTables_info,.paginate_button,.textControl,label{
+    font-size: 13px;
+  }
+  table{
+    width: 100%;
+  }
+
+  .paginate_button{
+    padding: 6px 0px;
+    /*border-radius: 15px;*/
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+  }
+  #titleText{
+    font-size: 25px
+  }
+  .funcButton{
+    width: 30px;
+    height: 30px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+  }
+
+  .btnControl{
+    height: 30px;
+    padding: 6px 0px;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.42857;
+  }
+  .btn-group-items{
+    padding: 2px;
+
+  }
+  .loadingImg{
+    width: 100%;
+  }
+  #saveReservation:hover{
+    color: white;
+  }
+
+
+</style>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-firestore.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+</head>
+<body >
+  <div class="container" style="width: 100%">
+    <div class="row">
+      <div class="col-sm-6 d-flex p-2 justify-content-start" id = "headText">
+        <h4 id="titleText" title="Reservations">Manage Reservations</h4>
+      </div>
+      <div class="col-sm-6 d-flex p-2 justify-content-end" id = "headText">
+
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <button type="button" class="btn btn-outline-primary textControl btnControl btn-group-items" onclick="getRealtimeUpdates()"><span class="btn-group-items">Refresh Table</span></button>
+          <button type="button" class="btn btn-outline-info textControl btnControl btn-group-items" onclick="location.href = 'events.html';"><span class="btn-group-items">Manage Events</span>
+          </button>
+          <button type="button" class="btn btn-outline-info textControl btnControl btn-group-items" data-toggle ><span class="btn-group-items">Sign-up</span>
+          </button>
+          <button type="button" class="btn btn-outline-danger textControl btnControl btn-group-items" onclick="logout()"><span class="btn-group-items">Test Logout</span></button>
+        </div>
+        
+      </div>
+    </div>
+
+    <div class="row" style="width: 100%">
+      <div class="col-sm-3">
+
+      </div>
+      <div class="col-sm-9" style="width: 100%">
+        <div id = "tdLoading" class="mt-5">
+          <div class="d-flex p-2 mt-5 justify-content-center">
+           <!--  <img id="loadingImg"  src="../images/loading.gif" style="width: 40%"> -->
+           <div class="loader-lg mt-5"> </div>
+         </div>
+       </div>
+       <table id="reservation_table" class="table table-hover  dataTableProc" style="display: none">
+        <thead class="thead-dark">
+          <tr>
+            <th width="20%">Name</th>
+            <th width="10%">Phone</th>
+            <th width="10%">Email Address</th>
+              <!--<th>City</th>
+              <th>State</th>
+              <th>Zipcode</th> -->
+              <th width="20%">Address</th>
+              <th width="10%">Referal </th>
+              <th width="10%">Event</th>
+              <th>Message</th>
+              <th width="10%">Date</th>
+              <th width="10%">Action</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+
+<footer>
+ <script src="../js/app.js"> </script>
+ <script src="../js/sanitize.js"> </script>
+ <script src="../js/adminTable.js"> </script>
+</footer>
+
+<div class="modal fade" id="modalMessage" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>
+          <span id = "nameForMessage">Loading Data</span>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+
+        
+      </div>
+      <div class="modal-body">
+
+        <p id="messagePlaceHolder">Loading Data</p>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-primary btnControl btn-group-items" data-dismiss="modal">Close</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalDelete" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>
+          <span id = "nameForMessage">Are you sure?</span>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>        
+      </div>
+      <div class="modal-body">
+        <p id="delMessage?">Delete <span id="delName">name</span>'s Reservation?</p>
+        <button type="button" class="form-control  btn-danger btn-group-items" data-dismiss="modal" id="saveReservation" onclick="delRow()"><strong>Yes, Delete</strong></button>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="modalEdit" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Edit Information</h4>
+        <button type="button" class="close" data-dismiss="modal" onclick="resetEditForm()"><i class="fa fa-times"></i></button>
+
+        
+      </div>
+      <div class="modal-body">
+        <div class="form" id="reservationForm" onsubmit="return reserveEvent();">
+          <div class="form-content">
+            <div class="col-sm-12">
+              <h5>Name</h5>
+              <input type="text" class="form-control" action="#" placeholder="Your Name *" id = "r_name" required />
+              <h5>Choose and Event</h5>
+              <select class="form-control" id = "r_event">
+                <option value="" disabled selected>Select your option *</option>
+                <!-- <option>7th World Wide Uchinanchu Festival Tour | Oct 25 - Nov 1, 2020</option>
+                  <option>56th World Wide Uchinanchu Festival Tour | Oct 25 - Nov 1, 2020</option> -->
+                </select>
+                <h5>Phone Number</h5>
+                <input type="text" class="form-control" placeholder="Your Phone Number *" id = "r_phone" required/>
+                <h5>Email Address</h5>
+                <input type="text" class="form-control" placeholder="Your Email Address *" id = "r_email" required/>
+                <h5>City</h5>
+                <input type="text" class="form-control" placeholder="Your City *" id = "r_city" required/>
+                <h5>State</h5>
+                <input type="text" class="form-control" placeholder="Your State *" id = "r_state" required/>
+                <h5>Zipcode</h5>
+                <input type="text" class="form-control" placeholder="Your Zipcode *" id = "r_zipcode" required/>
+                <h5>How Did You Hear About us?</h5>
+                <select class="form-control" id = "r_how">
+                 <option value="" disabled selected>Select your option *</option>
+                 <option>Web Search</option>
+                 <option>Social Media</option>
+                 <option>Email</option>
+                 <option>News Paper</option>
+                 <option>Radio</option>
+                 <option>TV</option>
+                 <option>Friend</option>
+                 <option>Other</option>
+
+               </select>
+               <h5>Message</h5>
+               <textarea class="form-control" rows="5" id = "r_message"></textarea>
+               <br>
+
+               <button type="submit" class="form-control  btn-warning btn-group-items" data-dismiss="modal" id="saveReservation" onclick="alterEvent()"><strong>Update Reservation</strong></button>
+             </div>
+
+           </div>
+
+         </div>
+       </div>
+       <div class="modal-footer">
+        <button type="button" class="btn btn-primary btnControl btn-group-items" data-dismiss="modal" onclick="resetEditForm()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</html>
+
+
